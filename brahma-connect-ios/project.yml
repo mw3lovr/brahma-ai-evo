@@ -1,0 +1,64 @@
+name: BrahmaConnect
+options:
+  bundleIdPrefix: com.brahma
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+
+targets:
+  BrahmaConnect:
+    type: application
+    platform: iOS
+    sources:
+      - path: BrahmaConnect
+      # Reuse the Android app's holographic WebGL background as-is.
+      - path: ../brahma-connect-android/app/src/main/assets/web_background
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.brahma.connect
+        PRODUCT_NAME: BrahmaConnect
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: BrahmaConnect/Info.plist
+        CODE_SIGN_STYLE: Automatic
+    info:
+      path: BrahmaConnect/Info.plist
+      properties:
+        CFBundleDisplayName: Brahma Connect
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen:
+          UIColorName: ""
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UIUserInterfaceStyle: Dark
+        NSCameraUsageDescription: Brahma Connect uses the camera to scan the pairing QR code shown on your PC and to control the flashlight.
+        NSLocalNetworkUsageDescription: Brahma Connect needs local network access to find and connect to Brahma on your PC.
+        NSBonjourServices:
+          - _BRAHMA._tcp
+        # The gateway speaks plain ws:// on the LAN, like the Android build (usesCleartextTraffic).
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+          NSAllowsLocalNetworking: true
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
+        UIBackgroundModes:
+          - audio

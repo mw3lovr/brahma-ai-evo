@@ -1,0 +1,71 @@
+name: Build iOS App (.ipa)
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - '**'
+    paths:
+      - 'brahma-connect-ios/**'
+      - 'brahma-connect-android/app/src/main/assets/web_background/**'
+      - '.github/workflows/build-ios.yml'
+
+jobs:
+  build-ios:
+    name: Build Brahma Connect for iOS
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s "$(ls -d /Applications/Xcode_16*.app | sort -V | tail -1)"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        working-directory: brahma-connect-ios
+        run: xcodegen generate
+
+      - name: Build (unsigned)
+        working-directory: brahma-connect-ios
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project BrahmaConnect.xcodeproj \
+            -scheme BrahmaConnect \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build | tee xcodebuild.log | grep -E '(error|warning: .*BrahmaConnect|BUILD)' || true
+          test -d build/Build/Products/Release-iphoneos/BrahmaConnect.app
+
+      - name: Package .ipa
+        working-directory: brahma-connect-ios
+        run: |
+          mkdir -p dist/Payload
+          cp -R build/Build/Products/Release-iphoneos/BrahmaConnect.app dist/Payload/
+          cd dist && zip -qry BrahmaConnect-unsigned.ipa Payload
+          ls -lh BrahmaConnect-unsigned.ipa
+
+      - name: Upload .ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: BrahmaConnect-iOS-unsigned-ipa
+          path: brahma-connect-ios/dist/BrahmaConnect-unsigned.ipa
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-log
+          path: brahma-connect-ios/xcodebuild.log
+          if-no-files-found: ignore
