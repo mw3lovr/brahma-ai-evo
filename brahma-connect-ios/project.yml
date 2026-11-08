@@ -30,35 +30,3 @@ targets:
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: BrahmaConnect/Info.plist
         CODE_SIGN_STYLE: Automatic
-    info:
-      path: BrahmaConnect/Info.plist
-      properties:
-        CFBundleDisplayName: Brahma Connect
-        CFBundleShortVersionString: $(MARKETING_VERSION)
-        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
-        UILaunchScreen:
-          UIColorName: ""
-        UIApplicationSceneManifest:
-          UIApplicationSupportsMultipleScenes: false
-        UISupportedInterfaceOrientations:
-          - UIInterfaceOrientationPortrait
-          - UIInterfaceOrientationLandscapeLeft
-          - UIInterfaceOrientationLandscapeRight
-        UISupportedInterfaceOrientations~ipad:
-          - UIInterfaceOrientationPortrait
-          - UIInterfaceOrientationPortraitUpsideDown
-          - UIInterfaceOrientationLandscapeLeft
-          - UIInterfaceOrientationLandscapeRight
-        UIUserInterfaceStyle: Dark
-        NSCameraUsageDescription: Brahma Connect uses the camera to scan the pairing QR code shown on your PC and to control the flashlight.
-        NSLocalNetworkUsageDescription: Brahma Connect needs local network access to find and connect to Brahma on your PC.
-        NSBonjourServices:
-          - _BRAHMA._tcp
-        # The gateway speaks plain ws:// on the LAN, like the Android build (usesCleartextTraffic).
-        NSAppTransportSecurity:
-          NSAllowsArbitraryLoads: true
-          NSAllowsLocalNetworking: true
-        UIFileSharingEnabled: true
-        LSSupportsOpeningDocumentsInPlace: true
-        UIBackgroundModes:
-          - audio
